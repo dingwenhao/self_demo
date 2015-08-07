@@ -1,0 +1,610 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>首页</title>
+<script type="text/javascript" src="${tpl_dir}video/js/jquery.min.js"></script>
+<script type="text/javascript" src="${tpl_dir}video/js/superslide.2.1.js"></script>
+<link href="${tpl_dir}video/css/style.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="${tpl_dir}video/css/focus.css" media="screen">
+<script type="text/javascript" src="/js/lib/subModal/common.js"></script>
+<script type="text/javascript" src="/js/lib/subModal/subModal.js"></script>
+<link href="/js/lib/subModal/subModal.css" type="text/css" rel="stylesheet"/>
+<script src="${tpl_dir}js/showLogin.js" type="text/javascript"></script>
+</head>
+<body>
+  <!--[if lt IE 8]>
+  <div  style="margin:0 auto; line-height:35px; padding:10px 0;text-align:center; font-size:18px; background:#f0f0f0">
+      您正在使用的网络浏览器版本太低，为了您能更好地浏览和体验本站内容，建议更换或升级您的浏览器。
+</div>
+<![endif]-->
+<!--head-->
+## if(!empty("session")&&session.user!=null){
+	您好，<span class="mima da"><a href="/u/${session.user.id! }" target="_blank">${session.user.username!session.user.name!}</a></span>
+	&nbsp;&nbsp;&nbsp;<label><a href="/logout">退出</a></label>
+	
+##}
+<div class="head"> <img src="${tpl_dir}video/images/shipinlogo.png"  /></div>
+<!--nav-->
+<div class="navBar">
+  <ul class="nav clearfix">
+    <li id="m1" class="m on">
+      <h3><a target="_blank" href="index.html">首页</a></h3>
+    </li>
+    <li id="m2" class="m">
+      <h3><a target="_blank" href="二级页面.html">考试</a></h3>
+    </li>
+    <li id="m3" class="m">
+      <h3><a target="_blank" href="二级页面.html">科普</a></h3>
+    </li>
+    <li id="m4" class="m">
+      <h3><a target="_blank" href="二级页面.html">讲课</a></h3>
+    </li>
+    <li id="m5" class="m">
+      <h3><a target="_blank" href="二级页面.html">病例</a></h3>
+    </li>
+     <li id="m5" class="m">
+      <h3><a target="_blank" href="二级页面.html">采访</a></h3>
+    </li>
+    <li id="m6" class="m">
+      <h3><a target="_blank" href="二级页面.html">科室 ∨</a></h3>
+      <ul class="sub" style="display: none;">
+        <li><a href="#">肿瘤</a></li>
+        <li><a href="#">肝病</a></li>
+        <li><a href="#">心血管</a></li>
+        <li><a href="#">内分泌</a></li>
+        <li><a href="#">神经</a></li>
+        <li><a href="#">泌尿</a></li>
+        <li><a href="#">呼吸</a></li>
+        <li><a href="#">血管</a></li>
+        <li><a href="#">消化</a></li>
+        <li><a href="#">骨运动</a></li>
+      </ul>
+    </li>
+        <li id="m7" class="m">
+      <h3><a target="_blank" href="专题.html">专题</a></h3>
+    </li>
+     <div class="shangchuan">
+      <a target="_blank" href="上传视频.html">上传视频</a>
+     </div>
+  </ul>
+</div>
+<script type="text/javascript">jQuery(".nav").slide({ type:"menu",  titCell:".m", targetCell:".sub", delayTime:0, triggerTime:0,returnDefault:false  });	</script>
+
+<!--focus-->
+## var regVideo=yx_video.recommendList('推荐视频');
+<div class="wrapper">
+        <div class="wy-content">
+            <div class="wy-mod-banner">
+            
+                <div id="_banners" class="banners">
+                ## for(regvideo in regVideo){
+                   <div class="banner banner">
+                      <img src="${regvideo.img_url!}" alt="${regvideo.name!}"  width="100%">
+                  </div>
+               ##}
+              
+                </div>
+                 ## var index=0;
+                <div id="_focus" class="focus">
+                 ## while(index < regVideo.~size){
+                 ##if(index==0){
+                    <a data-index="${index}" href="#" class="on">
+                        <span class="bg-b"></span>
+                        <span class="inner"></span>
+                    </a>
+                    ##}else{
+                     <a data-index="${index}" href="#">
+                        <span class="bg-b"></span>
+                        <span class="inner"></span>
+                    </a>
+                    ##}
+                  ## index=index+1;
+                 ##}
+                </div>
+            
+            </div>
+
+        </div>
+
+    </div>
+<script type="text/javascript" src="${tpl_dir}video/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+
+    var glume = function(banners_id, focus_id){
+        this.$ctn = $('#' + banners_id);
+        this.$focus = $('#' + focus_id);
+        this.$adLis = null;
+        this.$btns = null;
+        this.switchSpeed = 5;//自动播放间隔(s)
+        this.defOpacity = 1;
+        this.crtIndex = 0;
+        this.adLength = 0;
+        this.timerSwitch = null;
+        this.init();
+    };
+    glume.prototype = {
+        fnNextIndex:function(){
+            return (this.crtIndex >= this.adLength-1)?0:this.crtIndex+1;
+        },
+        //动画切换
+        fnSwitch:function(toIndex){
+            if(this.crtIndex==toIndex){return;}
+            this.$adLis.css('zIndex', 0);
+            this.$adLis.filter(':eq('+this.crtIndex+')').css('zIndex', 2);
+            this.$adLis.filter(':eq('+toIndex+')').css('zIndex', 1);
+            this.$btns.removeClass('on');
+            this.$btns.filter(':eq('+toIndex+')').addClass('on');
+            var me = this;
+
+            $(this.$adLis[this.crtIndex]).animate({
+                opacity: 0
+            }, 1000, function() {
+                me.crtIndex = toIndex;
+                $(this).css({
+                    opacity: me.defOpacity,
+                    zIndex: 0
+                });
+            });
+        },
+        fnAutoPlay:function(){
+            this.fnSwitch(this.fnNextIndex());
+        },
+        fnPlay:function(){
+            var me = this;
+            me.timerSwitch = window.setInterval(function() {
+                me.fnAutoPlay();
+            },me.switchSpeed*1000);
+        },
+        fnStopPlay:function(){
+            window.clearTimeout(this.timerSwitch);
+            this.timerSwitch = null;
+        },
+
+        init:function(){
+            this.$adLis = this.$ctn.children();
+            this.$btns = this.$focus.children();
+            this.adLength = this.$adLis.length;
+
+            var me = this;
+            //点击切换
+            this.$focus.on('click', 'a', function(e) {
+                e.preventDefault();
+                var index = parseInt($(this).attr('data-index'), 10)
+                me.fnSwitch(index);
+            });
+            this.$adLis.filter(':eq('+ this.crtIndex +')').css('zIndex', 2);
+            this.fnPlay();
+
+            //hover时暂停动画
+            this.$ctn.hover(function() {
+                me.fnStopPlay();
+            }, function() {
+                me.fnPlay();
+            });
+
+            if($.browser.msie && $.browser.version < 7) {
+                this.$btns.hover(function() {
+                    $(this).addClass('hover');
+                },function() {
+                    $(this).removeClass('hover');
+                });
+            }
+        }
+    };
+    var player1 = new glume('_banners', '_focus');    
+    </script>
+<!--tab-->
+<script type="text/javascript">
+$(document).ready(function() {
+	jQuery.jqmall = function(malltit,mall_conbox,shijian) {
+		$(mall_conbox).find("li").hide();
+		$(malltit).find("li:first").addClass("thismall").show(); 
+		$(mall_conbox).find("li:first").show();
+	
+		$(malltit).find("li").bind(shijian,function(){
+		  $(this).addClass("thismall").siblings("li").removeClass("thismall"); 
+			var activeindex = $(malltit).find("li").index(this);
+			$(mall_conbox).children().eq(activeindex).show().siblings().hide();
+			return false;
+		});
+	
+	};
+	/*调用方法如下：*/
+	$.jqmall("#malls","#mall_conbox","click");
+	
+	$.jqmall("#malls2","#mall_conbox2","mouseenter");
+	
+});
+</script>
+
+<div id="malllist" style="margin-top:20px">
+<div class="mall-left">
+<div class="mall-left-top">推荐视频</div>
+
+</div>
+    <ul class="malls" id="malls2">
+       <li><a href="#">猜你喜欢</a></li>
+       <li><a href="#">观看记录</a></li>
+       <li><a href="#">我的收藏</a></li>
+<!--       <li><a href="#">未登录提示登录</a></li>
+       <li><a href="#">登录但没观看记录和收藏状态</a></li>-->
+    </ul>
+<ul class="mall_conbox" id="mall_conbox2">
+<li class="mall_con">
+<!--滚动图片-->
+<script type="text/javascript">
+var Speed_1 = 10; //速度(毫秒)
+var Space_1 = 20; //每次移动(px)
+var PageWidth_1 = 255 * 4; //翻页宽度
+var interval_1 = 5000; //翻页间隔时间
+var fill_1 = 0; //整体移位
+var MoveLock_1 = false;
+var MoveTimeObj_1;
+var MoveWay_1="right";
+var Comp_1 = 0;
+var AutoPlayObj_1=null;
+function GetObj(objName){if(document.getElementById){return eval('document.getElementById("'+objName+'")')}else{return eval('document.all.'+objName)}}
+function AutoPlay_1(){clearInterval(AutoPlayObj_1);AutoPlayObj_1=setInterval('ISL_GoDown_1();ISL_StopDown_1();',interval_1)}
+function ISL_GoUp_1(){if(MoveLock_1)return;clearInterval(AutoPlayObj_1);MoveLock_1=true;MoveWay_1="left";MoveTimeObj_1=setInterval('ISL_ScrUp_1();',Speed_1);}
+function ISL_StopUp_1(){if(MoveWay_1 == "right"){return};clearInterval(MoveTimeObj_1);if((GetObj('ISL_Cont_1').scrollLeft-fill_1)%PageWidth_1!=0){Comp_1=fill_1-(GetObj('ISL_Cont_1').scrollLeft%PageWidth_1);CompScr_1()}else{MoveLock_1=false}
+AutoPlay_1()}
+function ISL_ScrUp_1(){if(GetObj('ISL_Cont_1').scrollLeft<=0){GetObj('ISL_Cont_1').scrollLeft=GetObj('ISL_Cont_1').scrollLeft+GetObj('List1_1').offsetWidth}
+GetObj('ISL_Cont_1').scrollLeft-=Space_1}
+function ISL_GoDown_1(){clearInterval(MoveTimeObj_1);if(MoveLock_1)return;clearInterval(AutoPlayObj_1);MoveLock_1=true;MoveWay_1="right";ISL_ScrDown_1();MoveTimeObj_1=setInterval('ISL_ScrDown_1()',Speed_1)}
+function ISL_StopDown_1(){if(MoveWay_1 == "left"){return};clearInterval(MoveTimeObj_1);if(GetObj('ISL_Cont_1').scrollLeft%PageWidth_1-(fill_1>=0?fill_1:fill_1+1)!=0){Comp_1=PageWidth_1-GetObj('ISL_Cont_1').scrollLeft%PageWidth_1+fill_1;CompScr_1()}else{MoveLock_1=false}
+AutoPlay_1()}
+function ISL_ScrDown_1(){if(GetObj('ISL_Cont_1').scrollLeft>=GetObj('List1_1').scrollWidth){GetObj('ISL_Cont_1').scrollLeft=GetObj('ISL_Cont_1').scrollLeft-GetObj('List1_1').scrollWidth}
+GetObj('ISL_Cont_1').scrollLeft+=Space_1}
+function CompScr_1(){if(Comp_1==0){MoveLock_1=false;return}
+var num,TempSpeed=Speed_1,TempSpace=Space_1;if(Math.abs(Comp_1)<PageWidth_1/2){TempSpace=Math.round(Math.abs(Comp_1/Space_1));if(TempSpace<1){TempSpace=1}}
+if(Comp_1<0){if(Comp_1<-TempSpace){Comp_1+=TempSpace;num=TempSpace}else{num=-Comp_1;Comp_1=0}
+GetObj('ISL_Cont_1').scrollLeft-=num;setTimeout('CompScr_1()',TempSpeed)}else{if(Comp_1>TempSpace){Comp_1-=TempSpace;num=TempSpace}else{num=Comp_1;Comp_1=0}
+GetObj('ISL_Cont_1').scrollLeft+=num;setTimeout('CompScr_1()',TempSpeed)}}
+function picrun_ini(){
+GetObj("List2_1").innerHTML=GetObj("List1_1").innerHTML;
+GetObj('ISL_Cont_1').scrollLeft=fill_1>=0?fill_1:GetObj('List1_1').scrollWidth-Math.abs(fill_1);
+GetObj("ISL_Cont_1").onmouseover=function(){clearInterval(AutoPlayObj_1)}
+GetObj("ISL_Cont_1").onmouseout=function(){AutoPlay_1()}
+AutoPlay_1();
+}
+</script>
+<div class="gundong"> <a class="LeftBotton" onmousedown="ISL_GoUp_1()" onmouseup="ISL_StopUp_1()" onmouseout="ISL_StopUp_1()" href="javascript:void(0);" target="_self"> < </a>
+  <div class="pcont" id="ISL_Cont_1">
+    <div class="ScrCont">
+      <div id="List1_1">
+        <!-- piclist begin --> 
+        ## var favorite=yx_video.Favorite();
+        ## for(list in favorite){
+        <a class="pl" href="详细页面.html" ><img src="${list.img_url!}" alt="${list.name!}" width="240" height="160"/>${list.name!}</a> 
+        ##}
+        <!-- piclist end -->
+      </div>
+      <div id="List2_1"></div>
+    </div>
+  </div>
+  <a class="RightBotton" onmousedown="ISL_GoDown_1()" onmouseup="ISL_StopDown_1()" onmouseout="ISL_StopDown_1()" href="javascript:void(0);" target="_self">></a> </div>
+<div class="c"></div>
+<script type="text/javascript">
+        <!--
+        picrun_ini()
+        //-->
+  </script>
+
+</li>
+            
+<!--<li class="mall_con" style=" display:none">
+        登录后和猜你喜欢一样列表展示
+</li>
+    
+<li class="mall_con" style=" display:none">
+        	登录后和猜你喜欢一样列表展示
+</li>-->
+    
+<li class="mall_con" style=" display:none">
+<script type="text/javascript">
+var Speed_3 = 10; //速度(毫秒)
+var Space_3 = 20; //每次移动(px)
+var PageWidth_3 = 255 * 4; //翻页宽度
+var interval_3 = 5000; //翻页间隔时间
+var fill_3 = 0; //整体移位
+var MoveLock_3 = false;
+var MoveTimeObj_3;
+var MoveWay_3="right";
+var Comp_3 = 0;
+var AutoPlayObj_3=null;
+function GetObj(objName){if(document.getElementById){return eval('document.getElementById("'+objName+'")')}else{return eval('document.all.'+objName)}}
+function AutoPlay_3(){clearInterval(AutoPlayObj_3);AutoPlayObj_3=setInterval('ISL_GoDown_3();ISL_StopDown_3();',interval_3)}
+function ISL_GoUp_3(){if(MoveLock_3)return;clearInterval(AutoPlayObj_3);MoveLock_3=true;MoveWay_3="left";MoveTimeObj_3=setInterval('ISL_ScrUp_3();',Speed_3);}
+function ISL_StopUp_3(){if(MoveWay_3 == "right"){return};clearInterval(MoveTimeObj_3);if((GetObj('ISL_Cont_3').scrollLeft-fill_3)%PageWidth_3!=0){Comp_3=fill_3-(GetObj('ISL_Cont_3').scrollLeft%PageWidth_3);CompScr_3()}else{MoveLock_3=false}
+AutoPlay_3()}
+function ISL_ScrUp_3(){if(GetObj('ISL_Cont_3').scrollLeft<=0){GetObj('ISL_Cont_3').scrollLeft=GetObj('ISL_Cont_3').scrollLeft+GetObj('List2_3').offsetWidth}
+GetObj('ISL_Cont_3').scrollLeft-=Space_3}
+function ISL_GoDown_3(){clearInterval(MoveTimeObj_3);if(MoveLock_3)return;clearInterval(AutoPlayObj_3);MoveLock_3=true;MoveWay_3="right";ISL_ScrDown_3();MoveTimeObj_3=setInterval('ISL_ScrDown_3()',Speed_3)}
+function ISL_StopDown_3(){if(MoveWay_3 == "left"){return};clearInterval(MoveTimeObj_3);if(GetObj('ISL_Cont_3').scrollLeft%PageWidth_3-(fill_3>=0?fill_3:fill_3+1)!=0){Comp_3=PageWidth_3-GetObj('ISL_Cont_3').scrollLeft%PageWidth_3+fill_3;CompScr_3()}else{MoveLock_3=false}
+AutoPlay_3()}
+function ISL_ScrDown_3(){if(GetObj('ISL_Cont_3').scrollLeft>=GetObj('List1_3').scrollWidth){GetObj('ISL_Cont_3').scrollLeft=GetObj('ISL_Cont_3').scrollLeft-GetObj('List1_3').scrollWidth}
+GetObj('ISL_Cont_3').scrollLeft+=Space_3}
+function CompScr_3(){if(Comp_3==0){MoveLock_3=false;return}
+var num,TempSpeed=Speed_3,TempSpace=Space_3;if(Math.abs(Comp_3)<PageWidth_3/2){TempSpace=Math.round(Math.abs(Comp_3/Space_3));if(TempSpace<1){TempSpace=1}}
+if(Comp_3<0){if(Comp_3<-TempSpace){Comp_3+=TempSpace;num=TempSpace}else{num=-Comp_3;Comp_3=0}
+GetObj('ISL_Cont_3').scrollLeft-=num;setTimeout('CompScr_3()',TempSpeed)}else{if(Comp_3>TempSpace){Comp_3-=TempSpace;num=TempSpace}else{num=Comp_3;Comp_3=0}
+GetObj('ISL_Cont_3').scrollLeft+=num;setTimeout('CompScr_3()',TempSpeed)}}
+function picrun_ini(){
+GetObj("List2_3").innerHTML=GetObj("List1_3").innerHTML;
+GetObj('ISL_Cont_3').scrollLeft=fill_3>=0?fill_3:GetObj('List1_3').scrollWidth-Math.abs(fill_3);
+GetObj("ISL_Cont_3").onmouseover=function(){clearInterval(AutoPlayObj_3)}
+GetObj("ISL_Cont_3").onmouseout=function(){AutoPlay_3()}
+AutoPlay_3();
+}
+</script>
+## if(!empty("session")&&session.user!=null){
+<div class="gundong"> <a class="LeftBotton" onmousedown="ISL_GoUp_3()" onmouseup="ISL_StopUp_3()" onmouseout="ISL_StopUp_3()" href="javascript:void(0);" target="_self"> < </a>
+  <div class="pcont" id="ISL_Cont_3">
+    <div class="ScrCont">
+      <div id="List1_3">
+        <!-- piclist begin --> 
+       ## var Viewer=yx_video.getViewLog('1','8',user.id,'video');
+       ##if(Viewer!=null&&Viewer!=""){
+        ## for(viewer in Viewer.list){
+           ## video=yx_video.getvideoById(viewer.id);
+        <a class="pl" href="详细页面.html" ><img src="${video.img_url!}" alt="${viewer.title!}" width="240" height="160"/>${viewer.id!}${viewer.title!}</a> 
+        ##}
+        ##}else{
+                              您还没有观看过视频
+        ##}
+        <!-- piclist end -->
+      </div>
+      <div id="List2_3"></div>
+    </div>
+  </div>
+  <a class="RightBotton" onmousedown="ISL_GoDown_3()" onmouseup="ISL_StopDown_3()" onmouseout="ISL_StopDown_3()" href="javascript:void(0);" target="_self">></a> </div>
+<div class="c"></div>
+<script type="text/javascript">
+        <!--
+        picrun_ini()
+        //-->
+  </script>
+##}else{
+<div class="weidenglu">
+<p>您还没有观看（收藏）视频，立即观看（收藏您感兴趣的）视频吧~</p>
+</div>
+##}
+</li>
+<li class="mall_con" style=" display:none">
+<script type="text/javascript">
+var Speed_2 = 10; //速度(毫秒)
+var Space_2 = 20; //每次移动(px)
+var PageWidth_2 = 255 * 4; //翻页宽度
+var interval_2 = 5000; //翻页间隔时间
+var fill_2 = 0; //整体移位
+var MoveLock_2 = false;
+var MoveTimeObj_2;
+var MoveWay_2="right";
+var Comp_2 = 0;
+var AutoPlayObj_2=null;
+function GetObj(objName){if(document.getElementById){return eval('document.getElementById("'+objName+'")')}else{return eval('document.all.'+objName)}}
+function AutoPlay_2(){clearInterval(AutoPlayObj_2);AutoPlayObj_2=setInterval('ISL_GoDown_2();ISL_StopDown_2();',interval_2)}
+function ISL_GoUp_2(){if(MoveLock_2)return;clearInterval(AutoPlayObj_2);MoveLock_2=true;MoveWay_2="left";MoveTimeObj_2=setInterval('ISL_ScrUp_2();',Speed_2);}
+function ISL_StopUp_2(){if(MoveWay_2 == "right"){return};clearInterval(MoveTimeObj_2);if((GetObj('ISL_Cont_2').scrollLeft-fill_2)%PageWidth_2!=0){Comp_2=fill_2-(GetObj('ISL_Cont_2').scrollLeft%PageWidth_2);CompScr_2()}else{MoveLock_2=false}
+AutoPlay_2()}
+function ISL_ScrUp_2(){if(GetObj('ISL_Cont_2').scrollLeft<=0){GetObj('ISL_Cont_2').scrollLeft=GetObj('ISL_Cont_2').scrollLeft+GetObj('List2_2').offsetWidth}
+GetObj('ISL_Cont_2').scrollLeft-=Space_2}
+function ISL_GoDown_2(){clearInterval(MoveTimeObj_2);if(MoveLock_2)return;clearInterval(AutoPlayObj_2);MoveLock_2=true;MoveWay_2="right";ISL_ScrDown_2();MoveTimeObj_2=setInterval('ISL_ScrDown_2()',Speed_2)}
+function ISL_StopDown_2(){if(MoveWay_2 == "left"){return};clearInterval(MoveTimeObj_2);if(GetObj('ISL_Cont_2').scrollLeft%PageWidth_2-(fill_2>=0?fill_2:fill_2+1)!=0){Comp_2=PageWidth_2-GetObj('ISL_Cont_2').scrollLeft%PageWidth_2+fill_2;CompScr_2()}else{MoveLock_2=false}
+AutoPlay_2()}
+function ISL_ScrDown_2(){if(GetObj('ISL_Cont_2').scrollLeft>=GetObj('List1_2').scrollWidth){GetObj('ISL_Cont_2').scrollLeft=GetObj('ISL_Cont_2').scrollLeft-GetObj('List1_2').scrollWidth}
+GetObj('ISL_Cont_2').scrollLeft+=Space_2}
+function CompScr_2(){if(Comp_2==0){MoveLock_2=false;return}
+var num,TempSpeed=Speed_2,TempSpace=Space_2;if(Math.abs(Comp_2)<PageWidth_2/2){TempSpace=Math.round(Math.abs(Comp_2/Space_2));if(TempSpace<1){TempSpace=1}}
+if(Comp_2<0){if(Comp_2<-TempSpace){Comp_2+=TempSpace;num=TempSpace}else{num=-Comp_2;Comp_2=0}
+GetObj('ISL_Cont_2').scrollLeft-=num;setTimeout('CompScr_2()',TempSpeed)}else{if(Comp_2>TempSpace){Comp_2-=TempSpace;num=TempSpace}else{num=Comp_2;Comp_2=0}
+GetObj('ISL_Cont_2').scrollLeft+=num;setTimeout('CompScr_2()',TempSpeed)}}
+function picrun_ini(){
+GetObj("List2_2").innerHTML=GetObj("List1_2").innerHTML;
+GetObj('ISL_Cont_2').scrollLeft=fill_2>=0?fill_2:GetObj('List1_2').scrollWidth-Math.abs(fill_2);
+GetObj("ISL_Cont_2").onmouseover=function(){clearInterval(AutoPlayObj_2)}
+GetObj("ISL_Cont_2").onmouseout=function(){AutoPlay_2()}
+AutoPlay_2();
+}
+</script>
+## if(!empty("session")&&session.user!=null){
+
+<div class="gundong"> <a class="LeftBotton" onmousedown="ISL_GoUp_2()" onmouseup="ISL_StopUp_2()" onmouseout="ISL_StopUp_2()" href="javascript:void(0);" target="_self"> < </a>
+  <div class="pcont" id="ISL_Cont_2">
+    <div class="ScrCont">
+      <div id="List1_2">
+        <!-- piclist begin --> 
+       ##var favoriteList=yx_video.Favirate1(user.id,'video');
+       ##if(favoriteList!=null&&favoriteList!=""){
+        ## for(favor in favoriteList){
+        <a class="pl" href="详细页面.html" ><img src="${favor.thumb!}" alt="${favor.title!}" width="240" height="160"/>${favor.id!}${favor.title!}</a> 
+        ##}
+        ##}else{
+                         您还没有收藏过视频
+        ##}
+        <!-- piclist end -->
+      </div>
+      <div id="List2_2"></div>
+    </div>
+  </div>
+  <a class="RightBotton" onmousedown="ISL_GoDown_2()" onmouseup="ISL_StopDown_2()" onmouseout="ISL_StopDown_2()" href="javascript:void(0);" target="_self">></a> </div>
+<div class="c"></div>
+<script type="text/javascript">
+        <!--
+        picrun_ini()
+        //-->
+  </script>
+##}else{
+<div class="weidenglu">
+<p>您还没有登陆账号哦，暂时不能查看观看记录（收藏视频）</p>
+<div class="denlgubtn"  onclick="showLogin()" >登录</div>
+</div>
+##}
+</li>
+
+</ul>
+</div>
+<!--精彩专题-->
+<div class="jingcai">
+<div class="jingcai_top">
+<div class="jingcai_top_left fl"> 精彩专题</div>
+<div class="jingcai_top_right fr"><a href="#">更多专题</a></div>
+<div class="clear"></div>
+</div>
+<!--001-->
+<div class="jigncai_content fl">
+<div class="jigncai_content_left fl"> <a href="#"><img src="${tpl_dir}video/uploads/banner2.jpg" alt="" /></a></div>
+<div class="jigncai_content_right fr">
+<div class="jigncai_content_right_title"><a href="#">这里是视频的标题，只能显示一行，超出省略</a></div>
+<div class="jigncai_content_right_content">
+这里是视频简介啊，视频简介这里是视频简介啊，视频简介这里是视频简介啊，视频简介这里是视频简介啊，视频简介这里是视频简介啊，视频简介这里是视频简介啊，视频简介这里是视频简介啊，视频简介这里是视频简介啊，视频简介这里是视频简介啊，视频简介这里是视频简介啊，视频简介这里是视频简介啊，视频简介这里是视频简介啊，视频简介这里是视频简介啊，视频简介
+</div>
+</div>
+
+</div>
+<!--002-->
+<div class="jigncai_content fr">
+<div class="jigncai_content_left fl"> <a href="#"><img src="${tpl_dir}video/uploads/banner4.jpg" alt="视频图片" /></a></div>
+<div class="jigncai_content_right fr">
+<div class="jigncai_content_right_title"><a href="#">这里是视频的标题，只能显示一行，超出省略</a></div>
+<div class="jigncai_content_right_content">
+这里是视频简介啊，视频简介这里是视频简介啊，视频简介这里是视频简介啊，视频简介
+</div>
+</div>
+
+</div>
+<div class="clear"></div>
+</div>
+<!--热门视频、最新上传-->
+<div class="remen_zuixin">
+<!--热门视频-->
+<div class="remen fl">
+<div class="jingcai_top" style="width:690px">
+<div class="jingcai_top_left fl">热门视频</div>
+<div class="jingcai_top_right fr"><a href="#">更多</a></div>
+<div class="clear"></div>
+</div>
+<!--001-->
+## var hotVideo=yx_video.recommendList('热门视频');
+## for(hotvideo in hotVideo){
+<div class="renmen_list fl">
+<div class="renmen_list_img"><img src="${hotvideo.img_url}" alt=""  /></div>
+<div class="renmen_list_txt"><a href="#">${hotvideo.name}</a> </div>
+##if(hotvideo.uname!=null){
+<div class="renmen_list_zuozhe"><a href="#">${hotvideo.uname} ${hotvideo.unit}</a></div>
+##}
+</div>
+##}
+</div>
+
+<!--最新-->
+<div class="zuixin fr">
+<div class="jingcai_top">
+<div class="jingcai_top_left fl">最新上传</div>
+<div class="jingcai_top_right fr"><a href="#">更多</a></div>
+<div class="clear"></div>
+</div>
+<div class="zuixin_bottom">
+## var firstday=yx_video.First();
+
+<!--01-->
+<div class="zuixin_list">
+<div class="zuixin_list_top">一天前</div>
+<div class="zuixin_list_content">
+<!--001-->
+## for(first in firstday){
+<div class="zuixin_list_content_list">
+<div class="zuixin_list_content_list_img fl"><a href="#"><img src="${first.img_url!}" alt=""/></a></div>
+<div class="zuixin_list_content_list_txt fr">
+<div class="zuixin_list_content_list_txt_top"><a href="#">${first.name!}</a></div>
+<div class="zuixin_list_content_list_bottom">播放：${first.view_count!}</div>
+</div>
+<div class="clear"></div>
+</div>
+##}
+
+<div class="clear"></div>
+</div>
+</div>
+<!--02-->
+## var secondDay=yx_video.Second();
+<div class="zuixin_list">
+<div class="zuixin_list_top">两天前</div>
+<div class="zuixin_list_content">
+<!--001-->
+## for(second in secondDay){
+<div class="zuixin_list_content_list">
+<div class="zuixin_list_content_list_img fl"><a href="#"><img src="${second.img_url!}" alt="${second.name!}"/></a></div>
+<div class="zuixin_list_content_list_txt fr">
+<div class="zuixin_list_content_list_txt_top">${second.name!}</div>
+<div class="zuixin_list_content_list_bottom">播放：${second.view_count!}</div>
+</div>
+<div class="clear"></div>
+</div>
+##}
+
+<div class="clear"></div>
+</div>
+</div>
+<!--03-->
+## var thirdDay=yx_video.Third();
+<div class="zuixin_list">
+<div class="zuixin_list_top">三天前</div>
+<div class="zuixin_list_content">
+<!--001-->
+## for(third in thirdDay){
+<div class="zuixin_list_content_list">
+<div class="zuixin_list_content_list_img fl"><a href="#"><img src="${third.img_url!}" alt="${third.name!}"/></a></div>
+<div class="zuixin_list_content_list_txt fr">
+<div class="zuixin_list_content_list_txt_top">${third.name!}</div>
+<div class="zuixin_list_content_list_bottom">播放：${third.view_count!}</div>
+</div>
+<div class="clear"></div>
+</div>
+##}
+<div class="clear"></div>
+</div>
+</div>
+<!--04-->
+## var morevideo=yx_video.More();
+<div class="zuixin_list">
+<div class="zuixin_list_top">更早。。。</div>
+<div class="zuixin_list_content">
+<!--001-->
+## for(more in morevideo){
+<div class="zuixin_list_content_list">
+<div class="zuixin_list_content_list_img fl"><a href="#"><img src="${more.img_url!}" alt="${more.name!}"/></a></div>
+<div class="zuixin_list_content_list_txt fr">
+<div class="zuixin_list_content_list_txt_top">${more.name!}</div>
+<div class="zuixin_list_content_list_bottom">播放：${more.view_count!}</div>
+</div>
+<div class="clear"></div>
+</div>
+##}
+<!--002-->
+<div class="clear"></div>
+</div>
+</div>
+
+</div>
+</div>
+<div class="clear"></div>
+</div>
+
+<!--视频分类-->
+<div class="jingcai">
+<div class="jingcai_top">
+<div class="jingcai_top_left fl">视频分类</div>
+<div class="clear"></div>
+</div>
+## var categoryList=yx_video.CategoryList();
+<div class="spfl">
+## for(list in categoryList){
+<a href="#"><li>${list.name!} &raquo;</li></a>
+##}
+<div class="clear"></div>
+</div>
+</div>
+</body>
+</html>
