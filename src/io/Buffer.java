@@ -35,6 +35,8 @@ public class Buffer {
 				i++;
 				System.out.println("第"+i+"行是"+s);
 				System.out.println("第"+i+"行是"+s);
+				System.out.println("第"+i+"行是"+s);
+				System.out.println("dddddddd");
 			}
 			
 		} catch (FileNotFoundException e) {
