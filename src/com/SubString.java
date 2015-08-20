@@ -10,7 +10,7 @@ public class SubString {
 	    Date date= new Date(0);
 	     String dat=date.toString();
 	     System.out.println(dat.substring(0,dat.length()>11?11:dat.length()));
-	   
+	     System.out.println(dat.substring(0,dat.length()>11?11:dat.length()));
 
 	}
 
